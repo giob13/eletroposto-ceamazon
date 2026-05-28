@@ -3,6 +3,9 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication, QVBoxLayout, QLa
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor, QPalette, QLinearGradient, QBrush, QFont, QFontMetrics
 from PyQt5.QtCore import Qt, QRect
 
+#teste de brach
+
+print("hello")
 
 class MedidorCircular(QWidget):
     def __init__(self, titulo, valor, unidade, is_soc=False):
