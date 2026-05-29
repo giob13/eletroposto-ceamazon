@@ -1,11 +1,10 @@
 import sys
-from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication, QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QProgressBar
+import os
+from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication, QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QProgressBar, QDialog
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor, QPalette, QLinearGradient, QBrush, QFont, QFontMetrics
 from PyQt5.QtCore import Qt, QRect
 
-#teste de brach
 
-print("hello")
 
 class MedidorCircular(QWidget):
     def __init__(self, titulo, valor, unidade, is_soc=False):
@@ -115,11 +114,76 @@ class MedidorCircular(QWidget):
 
         painter.end()
 
+class TelaInfoSistema(QDialog): #MUDAR ESCOLHA DE CORES
+    def __init__(self, parent= None):
+        super().__init__(parent)
+
+        self.setWindowTitle("Informações do Sistema")
+        self.setFixedSize(400,350)
+
+        #definindo fundo
+
+        self.setStyleSheet("background-color: #a5d2fa")
+
+        #organizando os widgets de forma vertical
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(30,30,30,30)
+        layout.setSpacing(15)
+
+        #formatando dos textos
+
+        titulo = QLabel("INFORMAÇÕES DO ELETROPOSTO") #mudo pra sistema?
+        titulo.setStyleSheet("color: #202931; font-size: 16px; font-weight: bold;")
+        titulo.setAlignment(Qt.AlignCenter)
+        layout.addWidget(titulo)
+
+        #adicionando as informações
+        info_texto = """
+        - Modelo: Eletroposto Fluvial 
+        - Versão do Firmware:
+        - Ip de Rede:
+        - Status do Servidor: Conectado
+        - Temperatura Interna:
+        - Tensão Nominal:
+        - última Manuntenção:
+
+        """
+
+        label_info = QLabel(info_texto)
+        label_info.setStyleSheet("color: black; font-size: 14px;")
+        layout.addWidget(label_info)
+
+        layout.addStretch()
+
+        #botão para fechar janela pop-up
+        btn_fechar = QPushButton("FECHAR")
+        btn_fechar.setMaximumHeight(40)
+        btn_fechar.setStyleSheet("""
+
+        QPushButton {
+            background-color: rgba(10,30,80,150);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            border: 2px solid #0078d7;
+            border-radius: 5px;           
+                                 }
+        
+        QPushButton:hover {
+            bacground-color: rgba(0,120,215,100);
+                                 
+                                 }
+        """)
+
+        #conectar o clique a função nativa de fechar janela
+        btn_fechar.clicked.connect(self.close)
+        layout.addWidget(btn_fechar)
+
 
 class MainWindow(QMainWindow):  # define estrutura da janela
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Elestroposto Marítimo")
+        self.setWindowTitle("Elestroposto Fluvial")
 
         # travando o tamanho da janela principal
         self.setGeometry(300, 220, 900, 500)
@@ -146,8 +210,13 @@ class MainWindow(QMainWindow):  # define estrutura da janela
         # logo
         logo_label = QLabel()
 
-        pixmap = QPixmap(
-            "C:/Users/giova/Documents/CEAMAZON - PIBIC/códigos/testes_layout/eletroposto.mod.png")
+        #procura o diretório do arquivo python
+        diretorio_atual = os.path.dirname(os.path.abspath(__file__))
+
+        #procura o nome da imagem
+        caminho = os.path.join(diretorio_atual, "logo_eletroposto.png")
+        
+        pixmap = QPixmap(caminho)
         pixmap = pixmap.scaled(450, 120, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         logo_label.setPixmap(pixmap)
 
@@ -192,6 +261,8 @@ class MainWindow(QMainWindow):  # define estrutura da janela
         botao_layout.addWidget(btn_inicio)
         botao_layout.addWidget(btn_config)
         botao_layout.addWidget(btn_info)
+
+        btn_info.clicked.connect(self.acao_info)
 
         #adicionando botao de parar carregamento + rodape
         rodape_layout = QHBoxLayout()
@@ -239,6 +310,8 @@ class MainWindow(QMainWindow):  # define estrutura da janela
         # Definimos uma largura fixa para ele não esticar
         btn_carregar.setFixedWidth(300) 
         rodape_layout.addWidget(btn_carregar)
+
+
 
         layout.addStretch()
 
@@ -298,6 +371,11 @@ class MainWindow(QMainWindow):  # define estrutura da janela
             botao1.setStyleSheet(estilo1)
             return botao1
 
+    def acao_info (self):
+        tela = TelaInfoSistema(self)
+
+        tela.exec()
+        
     
 app = QApplication(sys.argv)
 window = MainWindow()
