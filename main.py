@@ -41,10 +41,17 @@ class MainWindow(QMainWindow):  # define estrutura da janela
         diretorio_atual = os.path.dirname(os.path.abspath(__file__))
 
         #procura o nome da imagem
-        caminho = os.path.join(diretorio_atual, "logo_eletroposto.png")
+        caminho = os.path.join(diretorio_atual, "imagens", "logo_eletroposto.png")
+
+        
+        # --- ADICIONE ESTAS DUAS LINHAS PARA TESTAR ---
+        print(f"Caminho que o Python montou: {caminho}")
+        print(f"O Windows encontrou o arquivo? {os.path.exists(caminho)}")
+        # ---------------------------------------------
         
         pixmap = QPixmap(caminho)
-        pixmap = pixmap.scaled(450, 120, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+    
+        pixmap = pixmap.scaled(420, 120, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         logo_label.setPixmap(pixmap)
 
         # adicionar a logo ao layout
