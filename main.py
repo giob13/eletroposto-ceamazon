@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt, QRect
 from medidor_circular import MedidorCircular
 from tela_inform import TelaInfoSistema
 
-
+print("ola migos")
 class MainWindow(QMainWindow):  # define estrutura da janela
     def __init__(self):
         super().__init__()
