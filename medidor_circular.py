@@ -111,5 +111,5 @@ class MedidorCircular(QWidget):
         painter.end()
 
     def atualizar_valor(self, novo_valor):
-        self.novo_valor = novo_valor 
+        self.novo_valor = novo_valor  #Guarda os valores novos de tensão
         self.update() # Força o widget a se redesenhar se tiver alguma pintura customizada (QPainter)

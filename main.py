@@ -1,12 +1,12 @@
 import sys
 import os
 from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication, QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QProgressBar, QDialog
-from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor, QPalette, QLinearGradient, QBrush, QFont, QFontMetrics
+from PyQt5.QtGui import QPixmap, QColor, QPalette, QLinearGradient, QBrush, QFont, QFontMetrics
 from PyQt5.QtCore import Qt, QTimer
 from medidor_circular import MedidorCircular
 from tela_inform import TelaInfoSistema
 
-print("ola migos")
+
 class MainWindow(QMainWindow):  # Define estrutura da janela
     def __init__(self):
         super().__init__()
@@ -15,14 +15,8 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         # travando o tamanho da janela principal
         self.setGeometry(300, 220, 900, 500)
 
-
-        # --- VARIÁVEIS DE ESTADO DA SIMULAÇÃO ---
-        self.valor_soc = 80          # Começando em 80% para testar o final da carga
-        self.valor_corrente = 150    # Corrente inicial em Amperes
-        self.valor_tensao = 380      # Tensão fixa em Volts
-        self.minutos_restantes = 15  # Tempo estimado inicial
-        # ----------------------------------------
-
+        #Contador
+        self.contador = 0
         # Fundo
         widget = QWidget()
         self.setCentralWidget(widget)
@@ -149,24 +143,9 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
 
         layout.addStretch()
 
-        # --- CONFIGURAÇÃO DO TIMER DA SIMULAÇÃO ---
-        self.timer_simulacao = QTimer()
-        # Conecta o estouro do timer à nossa função de atualização
-        self.timer_simulacao.timeout.connect(self.atualizar_simulacao)
-        # Dispara a cada 1000 milissegundos (1 segundo)
-        self.timer_simulacao.start(1000) 
-        # ---------------------------------------------
-
-    def atualizar_simulação(self):
-         #Condição para atualizar o SoC
-        if self.valor_soc < 100: #Valor total
-             self.valor_soc += 1
-             self.barra_progresso.setValue(self.valor_soc)
-
-             #Atualizar o componente visual
-             if hasattr(self.valor_soc, "atualizar_valor")
-                self.soc.atualizar_valor(str(self.valor_soc))
-
+    def iniciar_carregamento(self):
+         
+    def parar_carregamento(self):
 
     def criar_botao(self, texto):
         botao = QPushButton(texto) #criação do objeto botão
@@ -233,4 +212,4 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
 app = QApplication(sys.argv)
 window = MainWindow()
 window.show()
-app.exec()
+sys.exit(app.exec_())
