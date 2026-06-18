@@ -109,3 +109,7 @@ class MedidorCircular(QWidget):
                          2, y_central, self.unidade)
 
         painter.end()
+
+    def atualizar_valor(self, novo_valor):
+        self.novo_valor = novo_valor 
+        self.update() # Força o widget a se redesenhar se tiver alguma pintura customizada (QPainter)
