@@ -2,12 +2,12 @@ import sys
 import os
 from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication, QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QProgressBar, QDialog
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor, QPalette, QLinearGradient, QBrush, QFont, QFontMetrics
-from PyQt5.QtCore import Qt, QRect
+from PyQt5.QtCore import Qt, QTimer
 from medidor_circular import MedidorCircular
 from tela_inform import TelaInfoSistema
 
 print("ola migos")
-class MainWindow(QMainWindow):  # define estrutura da janela
+class MainWindow(QMainWindow):  # Define estrutura da janela
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Elestroposto Fluvial")
@@ -15,7 +15,15 @@ class MainWindow(QMainWindow):  # define estrutura da janela
         # travando o tamanho da janela principal
         self.setGeometry(300, 220, 900, 500)
 
-        # fundo
+
+        # --- VARIÁVEIS DE ESTADO DA SIMULAÇÃO ---
+        self.valor_soc = 80          # Começando em 80% para testar o final da carga
+        self.valor_corrente = 150    # Corrente inicial em Amperes
+        self.valor_tensao = 380      # Tensão fixa em Volts
+        self.minutos_restantes = 15  # Tempo estimado inicial
+        # ----------------------------------------
+
+        # Fundo
         widget = QWidget()
         self.setCentralWidget(widget)
 
@@ -34,37 +42,32 @@ class MainWindow(QMainWindow):  # define estrutura da janela
         self.setPalette(palette)
         widget.setPalette(palette)
 
-        # logo
+        # Logo
         logo_label = QLabel()
 
-        #procura o diretório do arquivo python
-        diretorio_atual = os.path.dirname(os.path.abspath(__file__))
+        diretorio_atual = os.path.dirname(os.path.abspath(__file__)) #Procura o diretório do arquivo python
 
-        #procura o nome da imagem
-        caminho = os.path.join(diretorio_atual, "imagens", "logo_eletroposto.png")
+        caminho = os.path.join(diretorio_atual, "imagens", "logo_eletroposto.png") #Pprocura o nome da imagem
 
-        
-        # --- ADICIONE ESTAS DUAS LINHAS PARA TESTAR ---
-        print(f"Caminho que o Python montou: {caminho}")
+    
+        print(f"Caminho que o Python montou: {caminho}") #Testar o caminho da imagem
         print(f"O Windows encontrou o arquivo? {os.path.exists(caminho)}")
-        # ---------------------------------------------
+        
         
         pixmap = QPixmap(caminho)
     
         pixmap = pixmap.scaled(420, 120, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         logo_label.setPixmap(pixmap)
 
-        # adicionar a logo ao layout
-        layout.addWidget(logo_label, alignment=Qt.AlignHCenter | Qt.AlignTop)
+        layout.addWidget(logo_label, alignment=Qt.AlignHCenter | Qt.AlignTop) #Adicionar a logo ao layout
         
 
-        # adicionar os indicadores
+        # Indicadores
         indicadores_layout = QHBoxLayout()
         layout.addLayout(indicadores_layout)
+        indicadores_layout.setAlignment(Qt.AlignCenter)  # Centralizando os indicadores horizontalmente
 
-        # centralizando os indicadores horizontalmente
-        indicadores_layout.setAlignment(Qt.AlignCenter)
-
+        #Medidores com variáveis dinâmicas
         # corrente
         self.corrente = MedidorCircular("CORRENTE (A)", "150", "A")
         indicadores_layout.addWidget(self.corrente)
@@ -77,28 +80,27 @@ class MainWindow(QMainWindow):  # define estrutura da janela
         self.soc = MedidorCircular("SOC (CARGA)", "85", "%", True)
         indicadores_layout.addWidget(self.soc)
 
-        # adicionando um espaço entre eles
-        indicadores_layout.setSpacing(50)
+       
+        indicadores_layout.setSpacing(50)  # Adicionando um espaço entre eles
 
-        #layout botões
+        #Layout botões
         botao_layout = QHBoxLayout()
         botao_layout.setSpacing(20)
         layout.addLayout(botao_layout)
 
-        #criando botões
+        #Criando botões
         btn_inicio = self.criar_botao("INÍCIO")
         btn_config = self.criar_botao("CONFIGURAÇÕES DE CARGA") 
         btn_info = self.criar_botao("INFO. DO SISTEMA")
 
-        #adicionando os botões ao layout
-
+        #Adicionando os botões ao layout
         botao_layout.addWidget(btn_inicio)
         botao_layout.addWidget(btn_config)
         botao_layout.addWidget(btn_info)
 
         btn_info.clicked.connect(self.acao_info)
 
-        #adicionando botao de parar carregamento + rodape
+        #Rodapé - adicionando botão de parar carregamento
         rodape_layout = QHBoxLayout()
         rodape_layout.setContentsMargins(50,20,50,20)
         layout.addLayout(rodape_layout)
@@ -124,7 +126,7 @@ class MainWindow(QMainWindow):  # define estrutura da janela
             }
         """)
         
-        # O texto de baixo da barra
+        # Legenda da barra de carregamento
         label_tempo = QLabel("TEMPO RESTANTE: 04M")
         label_tempo.setStyleSheet("color: white; font-weight: bold; font-size: 16px;")
         label_tempo.setAlignment(Qt.AlignRight) # Alinha o texto à direita da barra
@@ -136,18 +138,35 @@ class MainWindow(QMainWindow):  # define estrutura da janela
         # Adiciona esse mini-layout no lado esquerdo do rodapé
         rodape_layout.addLayout(barra_layout)
         
-        # 2. Empurra o botão lá pra direita
+        #Empurra o botão lá pra direita
         rodape_layout.addStretch()
 
-        # 3. Adicionando o Botão Vermelho
+        # Adicionando o Botão Vermelho
         btn_carregar = self.criar_botao1("PARAR CARREGAMENTO")
         # Definimos uma largura fixa para ele não esticar
         btn_carregar.setFixedWidth(300) 
         rodape_layout.addWidget(btn_carregar)
 
-
-
         layout.addStretch()
+
+        # --- CONFIGURAÇÃO DO TIMER DA SIMULAÇÃO ---
+        self.timer_simulacao = QTimer()
+        # Conecta o estouro do timer à nossa função de atualização
+        self.timer_simulacao.timeout.connect(self.atualizar_simulacao)
+        # Dispara a cada 1000 milissegundos (1 segundo)
+        self.timer_simulacao.start(1000) 
+        # ---------------------------------------------
+
+    def atualizar_simulação(self):
+         #Condição para atualizar o SoC
+        if self.valor_soc < 100: #Valor total
+             self.valor_soc += 1
+             self.barra_progresso.setValue(self.valor_soc)
+
+             #Atualizar o componente visual
+             if hasattr(self.valor_soc, "atualizar_valor")
+                self.soc.atualizar_valor(str(self.valor_soc))
+
 
     def criar_botao(self, texto):
         botao = QPushButton(texto) #criação do objeto botão
