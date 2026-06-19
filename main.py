@@ -5,6 +5,7 @@ from PyQt5.QtGui import QPixmap, QColor, QPalette, QLinearGradient, QBrush, QFon
 from PyQt5.QtCore import Qt, QTimer
 from medidor_circular import MedidorCircular
 from tela_inform import TelaInfoSistema
+from conf import Configuracoes
 
 
 class MainWindow(QMainWindow):  # Define estrutura da janela
@@ -15,8 +16,6 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         # travando o tamanho da janela principal
         self.setGeometry(300, 220, 900, 500)
 
-        #Contador
-        self.contador = 0
         # Fundo
         widget = QWidget()
         self.setCentralWidget(widget)
@@ -39,29 +38,33 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         # Logo
         logo_label = QLabel()
 
-        diretorio_atual = os.path.dirname(os.path.abspath(__file__)) #Procura o diretório do arquivo python
+        # Procura o diretório do arquivo python
+        diretorio_atual = os.path.dirname(os.path.abspath(__file__))
 
-        caminho = os.path.join(diretorio_atual, "imagens", "logo_eletroposto.png") #Pprocura o nome da imagem
+        # Pprocura o nome da imagem
+        caminho = os.path.join(
+            diretorio_atual, "imagens", "logo_eletroposto.png")
 
-    
-        print(f"Caminho que o Python montou: {caminho}") #Testar o caminho da imagem
+        # Testar o caminho da imagem
+        print(f"Caminho que o Python montou: {caminho}")
         print(f"O Windows encontrou o arquivo? {os.path.exists(caminho)}")
-        
-        
+
         pixmap = QPixmap(caminho)
-    
-        pixmap = pixmap.scaled(420, 120, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+        pixmap = pixmap.scaled(
+            420, 120, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         logo_label.setPixmap(pixmap)
 
-        layout.addWidget(logo_label, alignment=Qt.AlignHCenter | Qt.AlignTop) #Adicionar a logo ao layout
-        
+        layout.addWidget(logo_label, alignment=Qt.AlignHCenter |
+                         Qt.AlignTop)  # Adicionar a logo ao layout
 
         # Indicadores
         indicadores_layout = QHBoxLayout()
         layout.addLayout(indicadores_layout)
-        indicadores_layout.setAlignment(Qt.AlignCenter)  # Centralizando os indicadores horizontalmente
+        # Centralizando os indicadores horizontalmente
+        indicadores_layout.setAlignment(Qt.AlignCenter)
 
-        #Medidores com variáveis dinâmicas
+        # Medidores com variáveis dinâmicas
         # corrente
         self.corrente = MedidorCircular("CORRENTE (A)", "150", "A")
         indicadores_layout.addWidget(self.corrente)
@@ -74,37 +77,38 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         self.soc = MedidorCircular("SOC (CARGA)", "85", "%", True)
         indicadores_layout.addWidget(self.soc)
 
-       
         indicadores_layout.setSpacing(50)  # Adicionando um espaço entre eles
 
-        #Layout botões
+        # Layout botões
         botao_layout = QHBoxLayout()
         botao_layout.setSpacing(20)
         layout.addLayout(botao_layout)
 
-        #Criando botões
+        # Criando botões
         btn_inicio = self.criar_botao("INÍCIO")
-        btn_config = self.criar_botao("CONFIGURAÇÕES DE CARGA") 
+        btn_config = self.criar_botao("CONFIGURAÇÕES DE CARGA")
         btn_info = self.criar_botao("INFO. DO SISTEMA")
 
-        #Adicionando os botões ao layout
+        # Adicionando os botões ao layout
         botao_layout.addWidget(btn_inicio)
         botao_layout.addWidget(btn_config)
         botao_layout.addWidget(btn_info)
 
         btn_info.clicked.connect(self.acao_info)
+        btn_config.clicked.connect(self.acao_config)
 
-        #Rodapé - adicionando botão de parar carregamento
+        # Rodapé - adicionando botão de parar carregamento
         rodape_layout = QHBoxLayout()
-        rodape_layout.setContentsMargins(50,20,50,20)
+        rodape_layout.setContentsMargins(50, 20, 50, 20)
         layout.addLayout(rodape_layout)
 
         barra_layout = QVBoxLayout()
 
         self.barra_progresso = QProgressBar()
-        self.barra_progresso.setValue(85) # Mesmo valor do SOC
-        self.barra_progresso.setTextVisible(False) # Esconde a porcentagem de dentro da barra
-        self.barra_progresso.setFixedHeight(15) # Deixa ela bem fininha
+        self.barra_progresso.setValue(85)  # Mesmo valor do SOC
+        # Esconde a porcentagem de dentro da barra
+        self.barra_progresso.setTextVisible(False)
+        self.barra_progresso.setFixedHeight(15)  # Deixa ela bem fininha
         self.barra_progresso.setFixedWidth(350)
 
         # QSS para a barra ficar azul clara com fundo escuro
@@ -119,40 +123,44 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
                 border-radius: 10px;
             }
         """)
-        
+
         # Legenda da barra de carregamento
         label_tempo = QLabel("TEMPO RESTANTE: 04M")
-        label_tempo.setStyleSheet("color: white; font-weight: bold; font-size: 16px;")
-        label_tempo.setAlignment(Qt.AlignRight) # Alinha o texto à direita da barra
-        
+        label_tempo.setStyleSheet(
+            "color: white; font-weight: bold; font-size: 16px;")
+        # Alinha o texto à direita da barra
+        label_tempo.setAlignment(Qt.AlignRight)
+
         # Adiciona a barra e o texto no seu mini-layout
         barra_layout.addWidget(self.barra_progresso)
         barra_layout.addWidget(label_tempo)
-        
+
         # Adiciona esse mini-layout no lado esquerdo do rodapé
         rodape_layout.addLayout(barra_layout)
-        
-        #Empurra o botão lá pra direita
+
+        # Empurra o botão lá pra direita
         rodape_layout.addStretch()
 
         # Adicionando o Botão Vermelho
         btn_carregar = self.criar_botao1("PARAR CARREGAMENTO")
         # Definimos uma largura fixa para ele não esticar
-        btn_carregar.setFixedWidth(300) 
+        btn_carregar.setFixedWidth(300)
         rodape_layout.addWidget(btn_carregar)
 
         layout.addStretch()
 
     def iniciar_carregamento(self):
-         
+        print("olá")
+
     def parar_carregamento(self):
+        print("olá")
 
     def criar_botao(self, texto):
-        botao = QPushButton(texto) #criação do objeto botão
+        botao = QPushButton(texto)  # criação do objeto botão
 
         botao.setMinimumHeight(50)
 
-        #QSS para criar efeito neon
+        # QSS para criar efeito neon
         estilo = """
                 QPushButton {
                     background-color: rgba(11, 103, 187, 150); /* Fundo azul bem escuro e levemente transparente */
@@ -175,13 +183,14 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         botao.setStyleSheet(estilo)
 
         return botao
-    
-    def criar_botao1(self, texto): # Mudei o nome para ficar mais claro
-            
-            botao1 = QPushButton(texto)
-            botao1.setMinimumHeight(60) # Deixei um pouquinho mais alto que os azuis
 
-            estilo1 = """
+    def criar_botao1(self, texto):  # Mudei o nome para ficar mais claro
+
+        botao1 = QPushButton(texto)
+        # Deixei um pouquinho mais alto que os azuis
+        botao1.setMinimumHeight(60)
+
+        estilo1 = """
                 QPushButton {
                     background-color: #e54d2e; /* Vermelho/Laranja Sólido */
                     color: white;
@@ -200,15 +209,20 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
                     background-color: #c93b1d; /* Mais escuro no clique */
                 }
             """
-            botao1.setStyleSheet(estilo1)
-            return botao1
+        botao1.setStyleSheet(estilo1)
+        return botao1
 
-    def acao_info (self):
-        tela = TelaInfoSistema(self)
+    def acao_info(self):
+        tela_info = TelaInfoSistema(self)
 
-        tela.exec()
-        
-    
+        tela_info.exec()
+
+    def acao_config(self):
+        tela_config = Configuracoes(self)
+
+        tela_config.exec()
+
+
 app = QApplication(sys.argv)
 window = MainWindow()
 window.show()

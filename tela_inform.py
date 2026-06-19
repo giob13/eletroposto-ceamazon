@@ -2,31 +2,31 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QPushButton, QDialog
 from PyQt5.QtCore import Qt
 
 
-
-class TelaInfoSistema(QDialog): #MUDAR ESCOLHA DE CORES
-    def __init__(self, parent= None):
+class TelaInfoSistema(QDialog):  # MUDAR ESCOLHA DE CORES
+    def __init__(self, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle("Informações do Sistema")
-        self.setFixedSize(400,350)
+        self.setFixedSize(400, 350)
 
-        #definindo fundo
+        # Definindo fundo
 
         self.setStyleSheet("background-color: #a5d2fa")
 
-        #organizando os widgets de forma vertical
+        # Organizando os widgets de forma vertical
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(30,30,30,30)
+        layout.setContentsMargins(30, 30, 30, 30)
         layout.setSpacing(15)
 
-        #formatando dos textos
+        # Formatando dos textos
 
-        titulo = QLabel("INFORMAÇÕES DO ELETROPOSTO") #mudo pra sistema?
-        titulo.setStyleSheet("color: #202931; font-size: 16px; font-weight: bold;")
+        titulo = QLabel("INFORMAÇÕES DO ELETROPOSTO")  # mudo pra sistema?
+        titulo.setStyleSheet(
+            "color: #202931; font-size: 16px; font-weight: bold;")
         titulo.setAlignment(Qt.AlignCenter)
         layout.addWidget(titulo)
 
-        #adicionando as informações
+        # Adicionando as informações
         info_texto = """
         - Modelo: Eletroposto Fluvial 
         - Versão do Firmware:
@@ -44,7 +44,7 @@ class TelaInfoSistema(QDialog): #MUDAR ESCOLHA DE CORES
 
         layout.addStretch()
 
-        #botão para fechar janela pop-up
+        # Botão para fechar janela pop-up
         btn_fechar = QPushButton("FECHAR")
         btn_fechar.setMaximumHeight(40)
         btn_fechar.setStyleSheet("""
@@ -64,6 +64,6 @@ class TelaInfoSistema(QDialog): #MUDAR ESCOLHA DE CORES
                                  }
         """)
 
-        #conectar o clique a função nativa de fechar janela
+        # Conectar o clique a função nativa de fechar janela
         btn_fechar.clicked.connect(self.close)
         layout.addWidget(btn_fechar)
