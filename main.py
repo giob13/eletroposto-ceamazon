@@ -3,8 +3,8 @@ import os
 from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication, QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QProgressBar, QDialog
 from PyQt5.QtGui import QPixmap, QColor, QPalette, QLinearGradient, QBrush, QFont, QFontMetrics
 from PyQt5.QtCore import Qt, QTimer
-from medidor_circular import MedidorCircular
-from tela_inform import TelaInfoSistema
+from elementos_graficos import MedidorCircular
+from infor import TelaInfoSistema
 from conf import Configuracoes
 
 

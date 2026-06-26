@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QLabel, QPushButton, QDialog
 from PyQt5.QtCore import Qt
 
 
-class TelaInfoSistema(QDialog):  # MUDAR ESCOLHA DE CORES
+class TelaInfoSistema(QDialog): 
     def __init__(self, parent=None):
         super().__init__(parent)
 
