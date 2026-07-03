@@ -143,9 +143,6 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
 
         layout.addStretch()
 
-    def iniciar_carregamento(self):
-         
-    def parar_carregamento(self):
 
     def criar_botao(self, texto):
         botao = QPushButton(texto) #criação do objeto botão
