@@ -206,7 +206,7 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
             """
         botao1.setStyleSheet(estilo1)
         return botao1
-
+    
     def acao_info(self):
         tela_info = TelaInfoSistema(self)
 

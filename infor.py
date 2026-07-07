@@ -1,5 +1,5 @@
 import os
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QDialog, QFrame
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QDialog, QFrame, QGraphicsOpacityEffect
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 
@@ -15,7 +15,7 @@ class TelaInfoSistema(QDialog):
 
         self.setAttribute(Qt.WA_StyledBackground, True)
 
-        # 1. LAYOUT PRINCIPAL (SEM MARGENS!)
+        # Layout Principal
         # Ao colocar as margens em zero, a barra superior cola no teto e nas laterais
         layout_principal = QVBoxLayout(self)
         layout_principal.setContentsMargins(0, 0, 0, 0)
@@ -42,9 +42,7 @@ class TelaInfoSistema(QDialog):
         # Adiciona a barra no topo da janela
         layout_principal.addWidget(self.barra_superior)
 
-        # ==========================================
-        # 3. ÁREA DO CONTEÚDO (Com o fundo Azul Escuro)
-        # ==========================================
+        #Conteudo
         self.area_conteudo = QFrame()
         self.area_conteudo.setStyleSheet("""
             QFrame {
@@ -62,21 +60,24 @@ class TelaInfoSistema(QDialog):
         layout_conteudo.setContentsMargins(20, 20, 20, 20)
         layout_conteudo.setSpacing(15)
 
-        #  FUNDO
-        self.fundo_eletroposto = QLabel()
+        #  Fundo
+        self.fundo_eletroposto = QLabel(self.area_conteudo)
+        self.fundo_eletroposto.setGeometry(0, 0, 400, 410)
+        self.fundo_eletroposto.setAlignment(Qt.AlignCenter) 
 
+        self.fundo_eletroposto.lower()
 
         diretorio = os.path.dirname(os.path.abspath(__file__))
         caminho_fundo = os.path.join(diretorio, "imagens", "fundo_eletroposto.png")
         
         if os.path.exists(caminho_fundo):
             pixmap_fundo = QPixmap(caminho_fundo)
-            pixmap_fundo = pixmap_fundo.scaled(340, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            pixmap_fundo = pixmap_fundo.scaled(250,250, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             self.fundo_eletroposto.setPixmap(pixmap_fundo)
             
-        layout_conteudo.addWidget(self.fundo_eletroposto, alignment=Qt.AlignHCenter)
-
-        # Cartão exemplo
+      
+        # Cartões 
+        # Cartão Servidor 
         cartao_info = QFrame()
         cartao_info.setStyleSheet("""
             QFrame {
@@ -85,21 +86,99 @@ class TelaInfoSistema(QDialog):
                 border-radius: 8px;
             }
         """)
-        layout_cartao = QVBoxLayout(cartao_info)
+
+        layout_cartaos = QVBoxLayout(cartao_info)
         
-        lbl_hardware = QLabel("HARDWARE")
-        lbl_hardware.setStyleSheet("color: #33B5E5; font-weight: bold; border: none;") # Azul claro ciano
-        lbl_modelo = QLabel("- Modelo: Eletroposto Fluvial")
+        lbl_servidor = QLabel("SERVIDOR")
+        lbl_servidor.setStyleSheet("color: #33B5E5; font-weight: bold; border: none;") # Azul claro ciano
+        lbl_modelo = QLabel("Status")
         lbl_modelo.setStyleSheet("border: none;")
         
-        layout_cartao.addWidget(lbl_hardware)
-        layout_cartao.addWidget(lbl_modelo)
+        layout_cartaos.addWidget(lbl_servidor)
+        layout_cartaos.addWidget(lbl_modelo)
         layout_conteudo.addWidget(cartao_info)
+
+        #Cartão Hardware
+        cartao_hardware = QFrame()
+        cartao_hardware.setStyleSheet("""
+
+            QFrame {
+                background-color: #1B2C42; 
+                border: 1px solid #2A4365; 
+                border-radius: 8px;
+            }
+        """)
+
+        layout_cartaoh = QVBoxLayout(cartao_hardware)
+
+        lbl_hardware = QLabel()
+
+        lbl_hardware = QLabel("HARDWARE")
+        lbl_hardware.setStyleSheet("color: #33B5E5; font-weight: bold; border: none;")
+        lbl_modelo1 = QLabel("Modelo: Eletroposto Fluvial")
+        lbl_modelo1.setStyleSheet("border: none;")
+
+        layout_cartaoh.addWidget(lbl_hardware)
+        layout_cartaoh.addWidget(lbl_modelo1)
+        layout_conteudo.addWidget(cartao_hardware)
+
+        #Cartão Monitoramento 
+        cartao_monitoramento = QFrame()
+        cartao_monitoramento.setStyleSheet("""
+
+            QFrame {
+                background-color: #1B2C42; 
+                border: 1px solid #2A4365; 
+                border-radius: 8px;
+            }
+        """)
+
+        layout_cartaom = QVBoxLayout(cartao_monitoramento)
+
+        lbl_hardware = QLabel()
+
+        lbl_monitoramento = QLabel("MONITORAMENTO")
+        lbl_monitoramento.setStyleSheet("color: #33B5E5; font-weight: bold; border: none;")
+        lbl_modelo2 = QLabel("Temperatura Interna: " )
+        #lbl_modelo2_ = QLabel("Tensão Nominal:")
+        lbl_modelo2.setStyleSheet("border: none;")
+
+        layout_cartaom.addWidget(lbl_monitoramento)
+        layout_cartaom.addWidget(lbl_modelo2)
+        #layout_cartaom.addWidget(lbl_modelo2_)
+        layout_conteudo.addWidget(cartao_monitoramento)
+
+        #Cartão Manunteção 
+        cartao_mauntencao = QFrame()
+        cartao_mauntencao.setStyleSheet("""
+
+            QFrame {
+                background-color: #1B2C42; 
+                border: 1px solid #2A4365; 
+                border-radius: 8px;
+            }
+        """)
+
+        layout_cartaoman = QVBoxLayout(cartao_mauntencao)
+
+        lbl_hardware = QLabel()
+
+        lbl_mauntencao = QLabel("MANUNTENÇÃO")
+        lbl_mauntencao.setStyleSheet("color: #33B5E5; font-weight: bold; border: none;")
+        #lbl_modelo3_ = QLabel("Última: ")
+        lbl_modelo3 = QLabel("Próxima:")
+        lbl_modelo3.setStyleSheet("border: none;")
+
+        layout_cartaoman.addWidget(lbl_mauntencao)
+        layout_cartaoman.addWidget(lbl_modelo3)
+        #layout_cartaoman.addWidget(lbl_modelo3_)
+        layout_conteudo.addWidget(cartao_mauntencao)
+
 
         # Empurra tudo pra cima e o botão pro final
         layout_conteudo.addStretch()
 
-        # --- BOTÃO FECHAR ---
+        # Botões
         btn_fechar = QPushButton("FECHAR")
         btn_fechar.setFixedHeight(40)
         btn_fechar.setStyleSheet("""
