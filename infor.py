@@ -1,5 +1,5 @@
-import os
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QDialog, QFrame, QGraphicsOpacityEffect
+import os, socket, subprocess, platform
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QDialog, QFrame
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 
@@ -11,7 +11,7 @@ class TelaInfoSistema(QDialog):
         # Usamos FramelessWindowHint para remover a barra branca padrão do Windows se quiser o visual 100% customizado.
         # self.setWindowFlags(Qt.FramelessWindowHint) 
         self.setWindowTitle("Informações do Sistema")
-        self.setFixedSize(400, 450) # Aumentei um pouco a altura para caber tudo
+        self.setFixedSize(350, 400) 
 
         self.setAttribute(Qt.WA_StyledBackground, True)
 
@@ -31,6 +31,7 @@ class TelaInfoSistema(QDialog):
                 /* border-top-left-radius: 10px; border-top-right-radius: 10px; */
             }
         """)
+        
         # Layout dentro da barra para alinhar o texto
         layout_barra = QHBoxLayout(self.barra_superior)
         layout_barra.setContentsMargins(15, 0, 15, 0)
@@ -62,17 +63,17 @@ class TelaInfoSistema(QDialog):
 
         #  Fundo
         self.fundo_eletroposto = QLabel(self.area_conteudo)
-        self.fundo_eletroposto.setGeometry(0, 0, 400, 410)
+        self.fundo_eletroposto.setGeometry(0, 0, 350, 400)
         self.fundo_eletroposto.setAlignment(Qt.AlignCenter) 
 
-        self.fundo_eletroposto.lower()
+        self.fundo_eletroposto.lower() #Envia a logo para trás
 
         diretorio = os.path.dirname(os.path.abspath(__file__))
         caminho_fundo = os.path.join(diretorio, "imagens", "fundo_eletroposto.png")
         
         if os.path.exists(caminho_fundo):
             pixmap_fundo = QPixmap(caminho_fundo)
-            pixmap_fundo = pixmap_fundo.scaled(250,250, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            pixmap_fundo = pixmap_fundo.scaled(500, 500, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             self.fundo_eletroposto.setPixmap(pixmap_fundo)
             
       
@@ -81,7 +82,8 @@ class TelaInfoSistema(QDialog):
         cartao_info = QFrame()
         cartao_info.setStyleSheet("""
             QFrame {
-                background-color: #1B2C42; 
+                /* Usando RGBA para dar 20 porcento de transparência e revelar a logo */
+                background-color: rgba(27, 44, 66, 150); 
                 border: 1px solid #2A4365; 
                 border-radius: 8px;
             }
@@ -91,19 +93,23 @@ class TelaInfoSistema(QDialog):
         
         lbl_servidor = QLabel("SERVIDOR")
         lbl_servidor.setStyleSheet("color: #33B5E5; font-weight: bold; border: none;") # Azul claro ciano
-        lbl_modelo = QLabel("Status")
-        lbl_modelo.setStyleSheet("border: none;")
-        
+
+        info = self.informacoes_rede()
+
+        lbl_status = QLabel(f"Status: {info['status']}")
+        lbl_rede = QLabel(f"Rede: {info['rede']}")
+
         layout_cartaos.addWidget(lbl_servidor)
-        layout_cartaos.addWidget(lbl_modelo)
+        layout_cartaos.addWidget(lbl_status)
+        layout_cartaos.addWidget(lbl_rede)
         layout_conteudo.addWidget(cartao_info)
 
         #Cartão Hardware
         cartao_hardware = QFrame()
         cartao_hardware.setStyleSheet("""
-
             QFrame {
-                background-color: #1B2C42; 
+                /* Usando RGBA para dar 20 porcento de transparência e revelar a logo */
+                background-color: rgba(27, 44, 66, 150); 
                 border: 1px solid #2A4365; 
                 border-radius: 8px;
             }
@@ -125,9 +131,9 @@ class TelaInfoSistema(QDialog):
         #Cartão Monitoramento 
         cartao_monitoramento = QFrame()
         cartao_monitoramento.setStyleSheet("""
-
             QFrame {
-                background-color: #1B2C42; 
+                /* Usando RGBA para dar 20 porcento de transparência e revelar a logo */
+                background-color: rgba(27, 44, 66, 150); 
                 border: 1px solid #2A4365; 
                 border-radius: 8px;
             }
@@ -151,9 +157,9 @@ class TelaInfoSistema(QDialog):
         #Cartão Manunteção 
         cartao_mauntencao = QFrame()
         cartao_mauntencao.setStyleSheet("""
-
             QFrame {
-                background-color: #1B2C42; 
+                /* Usando RGBA para dar 20 porcento de transparência e revelar a logo */
+                background-color: rgba(27, 44, 66, 150); 
                 border: 1px solid #2A4365; 
                 border-radius: 8px;
             }
@@ -193,3 +199,67 @@ class TelaInfoSistema(QDialog):
 
         # Adiciona a área de conteúdo abaixo da barra de título
         layout_principal.addWidget(self.area_conteudo)
+    
+    def informacoes_rede(self):
+        
+        info = {
+            "status": "Sem conexão",
+            "tipo": None,
+            "rede": None
+        }
+        
+        #Verifica a conexão com a internet
+        try:
+            socket.create_connection(('google.com', 80), timeout=3)
+            info["status"] = "Conectado"
+        
+        except OSError:
+            return info
+        
+        sistema = platform.system()
+
+        #Verifica qual sistema operacional está conectado
+
+        #Linux
+        if sistema == "Linux":
+            try:
+                ssid = subprocess.check_output(
+                    ["iwgetid", "-r"],
+                    text= True
+                    ).strip()
+                if ssid:
+                    info["tipo"] = "Wi-fi"
+                    info["rede"] = ssid
+
+                else: 
+                    info["tipo"] = "Ethernet"
+                    info["rede"] = "Cabo da Rede"
+
+            except Exception: 
+                info["tipo"] = "Ethernet"
+                info["rede"] = "Cabo de Rede"
+        
+        elif sistema == "Windows":
+            try:
+                resultado = subprocess.check_output(
+                     ["powershell", "-Command", "Get-NetConnectionProfile | Select-Object Name,InterfaceAlias"],
+                text=True
+                )        
+
+                linhas = resultado.splitlines()
+                
+                for linha in linhas:
+                    if "Wi-Fi" in linha or "Ethernet" in linha:
+                        partes = linha.split()
+
+                        if len(partes) >= 2:
+                            info["rede"] = partes[0]
+                            info["tipo"] = partes[-1]
+                            break
+
+            except Exception:
+                pass
+
+        return info
+    
+    
