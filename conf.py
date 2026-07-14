@@ -1,77 +1,148 @@
-from PyQt5.QtWidgets import QSpacerItem, QHBoxLayout, QSizePolicy, QVBoxLayout, QButtonGroup, QRadioButton, QLabel, QPushButton, QDialog, QSpinBox
+import os
+import sys
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import (
+    QApplication,
+    QButtonGroup,
+    QDialog,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QRadioButton,
+    QSizePolicy,
+    QSpacerItem,
+    QSpinBox,
+    QVBoxLayout,
+)
 
 
 class Configuracoes(QDialog):
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
         # Configurações da Janela
-        self.setWindowTitle("Configurações do Eletroposto")
-        self.setFixedSize(400, 350)
+        self.setWindowTitle("Configurações de Carga")
+        self.setFixedSize(400, 450)
+        self.setAttribute(Qt.WA_StyledBackground, True)
 
-        # Definindo fundo e estilo geral
-        self.setStyleSheet("""
-            QDialog {
-                background-color: #102135; /* Fundo totalmente branco */
-                color: #000000;            /* Texto preto */
-                font-family: 'Segoe UI', Arial, sans-serif;
-                font-size: 14px;
-            }
-            QLabel {
-                font-weight: bold;
-                color: #000000; /* Garante que os rótulos sejam pretos */
-            }
-            QSpinBox {
-                background-color: #F5F5F5; /* Cinza bem clarinho para dar contraste */
-                color: #000000;            /* Números pretos */
-                border: 2px solid #A0A0A0; /* Borda cinza mais escura */
-                border-radius: 5px;
-                padding: 5px;
-            }
-            QRadioButton {
-                color: #000000; /* Texto das bolinhas de seleção em preto */
-            }
-            QPushButton {
-                background-color: #E0E0E0; /* Fundo cinza claro para parecer um botão */
-                color: #000000;            /* Texto do botão em preto */
-                border: 2px solid #CCCCCC;
-                border-radius: 5px;
-                padding: 10px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #D0D0D0; /* Escurece um pouco ao passar o mouse */
+        # ==========================================
+        # 1. LAYOUT PRINCIPAL (SEM MARGENS)
+        # ==========================================
+        layout_principal = QVBoxLayout(self)
+        layout_principal.setContentsMargins(0, 0, 0, 0)
+        layout_principal.setSpacing(0)
+
+        # ==========================================
+        # 2. BARRA SUPERIOR (Teal)
+        # ==========================================
+        self.barra_sup = QFrame()
+        self.barra_sup.setFixedHeight(40)
+        self.barra_sup.setStyleSheet("""
+            QFrame {
+                background-color: #236B74; /* Cor Teal */
             }
         """)
 
-        # Organizando os widgets de forma vertical
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(30, 30, 30, 30)
-        layout.setSpacing(20)
+        layout_barra = QHBoxLayout(self.barra_sup)
+        layout_barra.setContentsMargins(15, 0, 15, 0)
 
-        # Título da Janela
-        titulo = QLabel("CONFIGURAÇÕES DE CARGA")
-        titulo.setStyleSheet(
-            "color: #FFFFFF; font-size: 16px; font-weight: bold;")
-        titulo.setAlignment(Qt.AlignCenter)
-        layout.addWidget(titulo)
+        titulo_barra = QLabel("CONFIGURAÇÕES DO ELETROPOSTO")
+        titulo_barra.setStyleSheet(
+            "color: white; font-weight: bold; font-family: Arial; font-size:"
+            " 13px; background: transparent;"
+        )
+        layout_barra.addWidget(
+            titulo_barra, alignment=Qt.AlignLeft | Qt.AlignVCenter
+        )
 
-        # --------OPÇÕES DE CARREGAMENTO--------
+        # Adiciona a barra no topo da janela
+        layout_principal.addWidget(self.barra_sup)
 
-        # Layout SOC
+        # ==========================================
+        # 3. ÁREA DE CONTEÚDO (Fundo Azul Escuro)
+        # ==========================================
+        self.area_conteudo = QFrame()
+        self.area_conteudo.setStyleSheet("""
+            QFrame {
+                background-color: #102135; /* Fundo principal azul escuro */
+            }
+            QLabel {
+                background-color: transparent; 
+                color: white; 
+                font-family: Arial;
+                font-weight: bold;
+                font-size: 13px;
+            }
+            QSpinBox {
+                background-color: #1B2C42; /* Azul um pouco mais claro que o fundo */
+                color: white;            /* Números em branco */
+                border: 1px solid #2A4365;
+                border-radius: 5px;
+                padding: 5px;
+                font-weight: bold;
+            }
+            QRadioButton {
+                color: white; /* AJUSTADO: Texto das bolinhas em branco para aparecer no fundo escuro */
+                font-weight: bold;
+                background: transparent;
+            }
+            QPushButton {
+                background-color: rgba(10,30,80,150); 
+                color: white;
+                font-size: 12px; 
+                font-weight: bold; 
+                border: 2px solid #0078d7; 
+                border-radius: 5px;          
+            }
+            QPushButton:hover { 
+                background-color: rgba(0,120,215,100); 
+            }
+        """)
+
+        # Layout EXCLUSIVO da área de conteúdo
+        layout_conteudo = QVBoxLayout(self.area_conteudo)
+        layout_conteudo.setContentsMargins(30, 30, 30, 30)
+        layout_conteudo.setSpacing(20)
+
+        # ==========================================
+        # 4. A LOGO COMO MARCA D'ÁGUA (FUNDO)
+        # ==========================================
+        self.fundo_eletroposto = QLabel(self.area_conteudo)
+        self.fundo_eletroposto.lower()  # Envia a logo para trás de tudo
+
+        diretorio = os.path.dirname(os.path.abspath(__file__))
+        caminho_fundo = os.path.join(
+            diretorio, "imagens", "fundo_eletroposto.png"
+        )
+
+        if os.path.exists(caminho_fundo):
+            pixmap_fundo = QPixmap(caminho_fundo)
+            pixmap_fundo = pixmap_fundo.scaled(
+                250, 250, Qt.KeepAspectRatio, Qt.SmoothTransformation
+            )
+            self.fundo_eletroposto.setPixmap(pixmap_fundo)
+            # Centralizando a imagem no meio da área azul (X=75, Y=60)
+            self.fundo_eletroposto.setGeometry(75, 60, 250, 250)
+
+        # ==========================================
+        # 5. CONTROLES DO FORMULÁRIO
+        # ==========================================
+
+        # --- Limite de Carga (SOC) ---
         layout_soc = QHBoxLayout()
         layout_soc.addWidget(QLabel("Limite de Carga (SOC):"))
         self.input_soc = QSpinBox()
-        self.input_soc.setRange(50, 100)  # máximo e mínimo
+        self.input_soc.setRange(50, 100)
         self.input_soc.setValue(80)
         self.input_soc.setSuffix(" %")
         self.input_soc.setFixedWidth(100)
-
         layout_soc.addWidget(self.input_soc)
-        layout.addLayout(layout_soc)
+        layout_conteudo.addLayout(layout_soc)  # Adiciona no layout_conteudo!
 
-        # Layout Corrente Máxima
+        # --- Corrente Máxima ---
         layout_corrente = QHBoxLayout()
         layout_corrente.addWidget(QLabel("Corrente Máxima:"))
         self.input_corrente = QSpinBox()
@@ -79,14 +150,14 @@ class Configuracoes(QDialog):
         self.input_corrente.setValue(150)
         self.input_corrente.setSuffix(" A")
         self.input_corrente.setFixedWidth(100)
-
         layout_corrente.addWidget(self.input_corrente)
-        layout.addLayout(layout_corrente)
+        layout_conteudo.addLayout(layout_corrente)
 
-        # Layout Modo de Operação
+        # --- Modo de Operação ---
         layout_modo = QHBoxLayout()
         layout_modo.addWidget(QLabel("Modo de Operação:"))
         layout_radios = QHBoxLayout()
+
         self.radio_normal = QRadioButton("Normal")
         self.radio_rapido = QRadioButton("Rápido")
         self.radio_rapido.setChecked(True)
@@ -98,29 +169,32 @@ class Configuracoes(QDialog):
         layout_radios.addWidget(self.radio_normal)
         layout_radios.addWidget(self.radio_rapido)
         layout_modo.addLayout(layout_radios)
-        layout.addLayout(layout_modo)
+        layout_conteudo.addLayout(layout_modo)
 
-        # Espaçador
-        layout.addSpacerItem(QSpacerItem(
-            20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
+        # Espaçador (Empurra os botões de Salvar e Fechar para o fim da tela)
+        layout_conteudo.addSpacerItem(
+            QSpacerItem(
+                20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding
+            )
+        )
 
-        # Botão para salvar
+        # --- Botão Salvar ---
         self.btn_salvar = QPushButton("SALVAR")
-        self.btn_salvar.setMaximumHeight(40)
+        self.btn_salvar.setFixedHeight(40)
         self.btn_salvar.clicked.connect(self.accept)
-        layout.addWidget(self.btn_salvar)
+        layout_conteudo.addWidget(self.btn_salvar)
 
-        # Botão para fechar
+        # --- Botão Fechar ---
         self.btn_fechar = QPushButton("FECHAR")
-        self.btn_fechar.setMaximumHeight(40)
+        self.btn_fechar.setFixedHeight(40)
         self.btn_fechar.clicked.connect(self.reject)
-        layout.addWidget(self.btn_fechar)
+        layout_conteudo.addWidget(self.btn_fechar)
+
+        # Finaliza adicionando a área de conteúdo montada à janela principal
+        layout_principal.addWidget(self.area_conteudo)
 
 
-# Bloco para testar a janela isoladamente
-if __name__ == '__main__':
-    import sys
-    from PyQt5.QtWidgets import QApplication
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     janela = Configuracoes()
     janela.show()

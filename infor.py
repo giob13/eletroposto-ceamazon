@@ -78,8 +78,6 @@ class TelaInfoSistema(QDialog):
             
       
         # Cartões 
-
-
         # Cartão Servidor 
         cartao_info = QFrame()
         cartao_info.setStyleSheet("""
@@ -95,7 +93,7 @@ class TelaInfoSistema(QDialog):
         """)
 
         layout_cartaos = QVBoxLayout(cartao_info)
-        layout_cartaos.setSpacing(8) # Espaço bonito entre as linhas
+        layout_cartaos.setSpacing(5) # Espaço bonito entre as linhas
 
         # Puxando o seu dicionário de rede
         info = self.informacoes_rede()
@@ -110,7 +108,7 @@ class TelaInfoSistema(QDialog):
         layout_titulo.addWidget(icone_servidor)
 
         lbl_servidor = QLabel("SERVIDOR")
-        lbl_servidor.setStyleSheet("color: white; font-size: 13px; font-weight: bold;") 
+        lbl_servidor.setStyleSheet("color: #33B5E5; font-weight: bold; border: none;") # Azul claro ciano
         layout_titulo.addWidget(lbl_servidor)
         layout_titulo.addStretch() # Empurra o título para a esquerda
         
