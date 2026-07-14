@@ -78,31 +78,95 @@ class TelaInfoSistema(QDialog):
             
       
         # Cartões 
+
+
         # Cartão Servidor 
         cartao_info = QFrame()
         cartao_info.setStyleSheet("""
             QFrame {
-                /* Usando RGBA para dar 20 porcento de transparência e revelar a logo */
                 background-color: rgba(27, 44, 66, 150); 
                 border: 1px solid #2A4365; 
                 border-radius: 8px;
             }
+            QLabel {
+                border: none; /* Remove as caixas cinzas ao redor do texto */
+                background: transparent;
+            }
         """)
 
         layout_cartaos = QVBoxLayout(cartao_info)
-        
-        lbl_servidor = QLabel("SERVIDOR")
-        lbl_servidor.setStyleSheet("color: #33B5E5; font-weight: bold; border: none;") # Azul claro ciano
+        layout_cartaos.setSpacing(8) # Espaço bonito entre as linhas
 
+        # Puxando o seu dicionário de rede
         info = self.informacoes_rede()
 
-        lbl_status = QLabel(f"Status: {info['status']}")
-        lbl_rede = QLabel(f"Rede: {info['rede']}")
+        # título
+        layout_titulo = QHBoxLayout()
+        layout_titulo.setContentsMargins(0, 0, 0, 0)
+        
+        #para que serve?
+        icone_servidor = QLabel()
+        icone_servidor.setPixmap(QPixmap("caminho/para/icone.png").scaled(18, 18, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        layout_titulo.addWidget(icone_servidor)
 
-        layout_cartaos.addWidget(lbl_servidor)
-        layout_cartaos.addWidget(lbl_status)
-        layout_cartaos.addWidget(lbl_rede)
+        lbl_servidor = QLabel("SERVIDOR")
+        lbl_servidor.setStyleSheet("color: white; font-size: 13px; font-weight: bold;") 
+        layout_titulo.addWidget(lbl_servidor)
+        layout_titulo.addStretch() # Empurra o título para a esquerda
+        
+        layout_cartaos.addLayout(layout_titulo)
+
+        # Status
+        layout_status = QHBoxLayout()
+        layout_status.setContentsMargins(0, 0, 0, 0)
+
+        lbl_status_rotulo = QLabel("Status:")
+        lbl_status_rotulo.setStyleSheet("color: #CCCCCC; font-size: 12px;") # Cinza claro
+
+        lbl_status_valor = QLabel(f"{info['status'].upper()}") # Converte para MAIÚSCULA
+        
+        # Define a cor do texto e do LED dinamicamente com base no seu dicionário
+        if "conectado" in info['status'].lower():
+            cor_status = "#4CAF50" # Verde
+        else:
+            cor_status = "#F44336" # Vermelho (se estiver offline)
+            
+        lbl_status_valor.setStyleSheet(f"color: {cor_status}; font-weight: bold; font-size: 12px;")
+
+        # O LED Redondo (Luzinha)
+        led_status = QLabel()
+        led_status.setFixedSize(10, 10) # 10x10 pixels
+        led_status.setStyleSheet(f"""
+            background-color: {cor_status};
+            border-radius: 5px; /* Metade do tamanho para ficar redondo perfeitamente */
+        """)
+
+        layout_status.addWidget(lbl_status_rotulo)
+        layout_status.addWidget(lbl_status_valor)
+        layout_status.addWidget(led_status)
+        layout_status.addStretch() # Empurra tudo para a esquerda
+
+        layout_cartaos.addLayout(layout_status)
+
+
+        layout_rede = QHBoxLayout()
+        layout_rede.setContentsMargins(0, 0, 0, 0)
+
+        lbl_rede_rotulo = QLabel("IP de Rede:")
+        lbl_rede_rotulo.setStyleSheet("color: #CCCCCC; font-size: 12px;")
+
+        lbl_rede_valor = QLabel(f"{info['rede']}")
+        lbl_rede_valor.setStyleSheet("color: white; font-weight: bold; font-size: 12px;")
+
+        layout_rede.addWidget(lbl_rede_rotulo)
+        layout_rede.addWidget(lbl_rede_valor)
+        layout_rede.addStretch()
+
+        layout_cartaos.addLayout(layout_rede)
+
+        # Finalmente, adiciona o cartão pronto na janela
         layout_conteudo.addWidget(cartao_info)
+
 
         #Cartão Hardware
         cartao_hardware = QFrame()

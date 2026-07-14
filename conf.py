@@ -13,7 +13,7 @@ class Configuracoes(QDialog):
         # Definindo fundo e estilo geral
         self.setStyleSheet("""
             QDialog {
-                background-color: #FFFFFF; /* Fundo totalmente branco */
+                background-color: #102135; /* Fundo totalmente branco */
                 color: #000000;            /* Texto preto */
                 font-family: 'Segoe UI', Arial, sans-serif;
                 font-size: 14px;
@@ -53,7 +53,7 @@ class Configuracoes(QDialog):
         # Título da Janela
         titulo = QLabel("CONFIGURAÇÕES DE CARGA")
         titulo.setStyleSheet(
-            "color: #000000; font-size: 16px; font-weight: bold;")
+            "color: #FFFFFF; font-size: 16px; font-weight: bold;")
         titulo.setAlignment(Qt.AlignCenter)
         layout.addWidget(titulo)
 
