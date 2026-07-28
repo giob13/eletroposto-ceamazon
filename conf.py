@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-
+print("oi")
 class Configuracoes(QDialog):
 
     def __init__(self, parent=None):
