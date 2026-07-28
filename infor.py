@@ -1,5 +1,5 @@
-import os, socket, subprocess, platform
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QDialog, QFrame
+import os, socket, subprocess, platform, sys
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QDialog, QFrame, QApplication
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 
@@ -324,4 +324,11 @@ class TelaInfoSistema(QDialog):
 
         return info
     
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    janela_tela = TelaInfoSistema()
+    janela_tela.show()
+    sys.exit(app.exec_())
     

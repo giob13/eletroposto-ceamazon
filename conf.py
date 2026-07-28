@@ -187,6 +187,14 @@ class Configuracoes(QDialog):
         # Finaliza adicionando a área de conteúdo montada à janela principal
         layout_principal.addWidget(self.area_conteudo)
 
+    def obter_configuracoes(self):
+        #Salva os valores requeridos dentro de um dicionario
+        return {
+                "limite_soc": self.input_soc.value(),
+                "corrente_maxima": self.input_corrente.value(),
+                "modo_operacao": "Rápido" if self.radio_rapido.isChecked() else "Normal"
+        }
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

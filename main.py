@@ -2,7 +2,7 @@ import sys
 import os
 from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication, QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QProgressBar, QDialog
 from PyQt5.QtGui import QPixmap, QColor, QPalette, QLinearGradient, QBrush, QFont, QFontMetrics
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt
 from elementos_graficos import MedidorCircular
 from infor import TelaInfoSistema
 from conf import Configuracoes
@@ -214,8 +214,16 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
 
     def acao_config(self):
         tela_config = Configuracoes(self)
-
-        tela_config.exec()
+        
+        if tela_config.exec() == QDialog.Accepted:
+            #1. Coleta os dados novos
+            dados_configurados = tela_config.obter_configuracoes()
+            #2. Atualizar os dados 
+            self.sinais_soc.atualizar_configuracoes(dados_configurados)
+            # 3. (Opcional) Você pode atualizar um texto no próprio main.py mostrando o novo limite
+            print("Configurações salvas e enviadas com sucesso!")
+        else: 
+            print("O usuário fechou ou cancelou as configurações.")
 
 
 app = QApplication(sys.argv)
