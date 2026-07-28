@@ -28,16 +28,14 @@ class Configuracoes(QDialog):
         self.setFixedSize(400, 450)
         self.setAttribute(Qt.WA_StyledBackground, True)
 
-        # ==========================================
-        # 1. LAYOUT PRINCIPAL (SEM MARGENS)
-        # ==========================================
+        # 1. Layout Principal - sem margens
+
         layout_principal = QVBoxLayout(self)
         layout_principal.setContentsMargins(0, 0, 0, 0)
         layout_principal.setSpacing(0)
 
-        # ==========================================
-        # 2. BARRA SUPERIOR (Teal)
-        # ==========================================
+        # 2. Barra Superior
+
         self.barra_sup = QFrame()
         self.barra_sup.setFixedHeight(40)
         self.barra_sup.setStyleSheet("""
@@ -61,9 +59,8 @@ class Configuracoes(QDialog):
         # Adiciona a barra no topo da janela
         layout_principal.addWidget(self.barra_sup)
 
-        # ==========================================
-        # 3. ÁREA DE CONTEÚDO (Fundo Azul Escuro)
-        # ==========================================
+        # 3. Área de Conteúdo 
+        
         self.area_conteudo = QFrame()
         self.area_conteudo.setStyleSheet("""
             QFrame {
@@ -105,11 +102,10 @@ class Configuracoes(QDialog):
         # Layout EXCLUSIVO da área de conteúdo
         layout_conteudo = QVBoxLayout(self.area_conteudo)
         layout_conteudo.setContentsMargins(30, 30, 30, 30)
-        layout_conteudo.setSpacing(20)
+        layout_conteudo.setSpacing(45)
 
-        # ==========================================
-        # 4. A LOGO COMO MARCA D'ÁGUA (FUNDO)
-        # ==========================================
+        # 4. Logo como marca d'água
+        
         self.fundo_eletroposto = QLabel(self.area_conteudo)
         self.fundo_eletroposto.lower()  # Envia a logo para trás de tudo
 
@@ -121,15 +117,13 @@ class Configuracoes(QDialog):
         if os.path.exists(caminho_fundo):
             pixmap_fundo = QPixmap(caminho_fundo)
             pixmap_fundo = pixmap_fundo.scaled(
-                250, 250, Qt.KeepAspectRatio, Qt.SmoothTransformation
+                400, 400, Qt.KeepAspectRatio, Qt.SmoothTransformation
             )
             self.fundo_eletroposto.setPixmap(pixmap_fundo)
             # Centralizando a imagem no meio da área azul (X=75, Y=60)
-            self.fundo_eletroposto.setGeometry(75, 60, 250, 250)
+            self.fundo_eletroposto.setGeometry(0, 0, 400, 400)
 
-        # ==========================================
-        # 5. CONTROLES DO FORMULÁRIO
-        # ==========================================
+        #5. Controles da Configuração
 
         # --- Limite de Carga (SOC) ---
         layout_soc = QHBoxLayout()

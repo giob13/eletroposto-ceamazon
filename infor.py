@@ -63,7 +63,7 @@ class TelaInfoSistema(QDialog):
 
         #  Fundo
         self.fundo_eletroposto = QLabel(self.area_conteudo)
-        self.fundo_eletroposto.setGeometry(0, 0, 350, 400)
+        self.fundo_eletroposto.setGeometry(0, 0, 370, 370)
         self.fundo_eletroposto.setAlignment(Qt.AlignCenter) 
 
         self.fundo_eletroposto.lower() #Envia a logo para trás
@@ -73,7 +73,7 @@ class TelaInfoSistema(QDialog):
         
         if os.path.exists(caminho_fundo):
             pixmap_fundo = QPixmap(caminho_fundo)
-            pixmap_fundo = pixmap_fundo.scaled(500, 500, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            pixmap_fundo = pixmap_fundo.scaled(370, 370, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             self.fundo_eletroposto.setPixmap(pixmap_fundo)
             
       
