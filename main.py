@@ -6,6 +6,7 @@ from PyQt5.QtCore import Qt
 from elementos_graficos import MedidorCircular
 from infor import TelaInfoSistema
 from conf import Configuracoes
+from soc import monitoramento_soc
 
 
 class MainWindow(QMainWindow):  # Define estrutura da janela
@@ -41,7 +42,7 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         # Procura o diretório do arquivo python
         diretorio_atual = os.path.dirname(os.path.abspath(__file__))
 
-        # Pprocura o nome da imagem
+        # Procura o nome da imagem
         caminho = os.path.join(
             diretorio_atual, "imagens", "logo_eletroposto.png")
 
@@ -78,6 +79,9 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         indicadores_layout.addWidget(self.soc)
 
         indicadores_layout.setSpacing(50)  # Adicionando um espaço entre eles
+
+        #Monitoramento
+        self.sinais_soc = monitoramento_soc()
 
         # Layout botões
         botao_layout = QHBoxLayout()
