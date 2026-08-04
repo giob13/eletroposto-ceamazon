@@ -83,6 +83,10 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         #Monitoramento
         self.sinais_soc = monitoramento_soc()
 
+        self.sinais_soc.carga_carregada.connect(self.atualizar_soc)
+        self.sinais_soc.status_alterado.connect(self.atualizar_status)
+        self.sinais_soc.carregamento_concluido.connect(self.finalizar_carregamento)
+
         # Layout botões
         botao_layout = QHBoxLayout()
         botao_layout.setSpacing(20)
@@ -229,7 +233,16 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         else: 
             print("O usuário fechou ou cancelou as configurações.")
 
+    def atualizar_soc(self, porcentagem):
+        self.soc.atualizar_valor(porcentagem)
+        self.barra_progresso.setValue(porcentagem)
 
+    def atualizar_status (self, status):
+        print(status)
+
+    def finalizar_carregamento(self):
+        print("Carregamento concluído!")
+        
 app = QApplication(sys.argv)
 window = MainWindow()
 window.show()
