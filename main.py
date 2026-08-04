@@ -222,7 +222,7 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         if tela_config.exec() == QDialog.Accepted:
             #1. Coleta os dados novos
             dados_configurados = tela_config.obter_configuracoes()
-            #2. Atualizar os dados 
+            #2. Atualizar os dados (o erro está aqui, o caminho soc n está completo)
             self.sinais_soc.atualizar_configuracoes(dados_configurados)
             # 3. (Opcional) Você pode atualizar um texto no próprio main.py mostrando o novo limite
             print("Configurações salvas e enviadas com sucesso!")

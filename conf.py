@@ -17,7 +17,6 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-print("oi")
 class Configuracoes(QDialog):
 
     def __init__(self, parent=None):
@@ -194,6 +193,8 @@ class Configuracoes(QDialog):
                 "corrente_maxima": self.input_corrente.value(),
                 "modo_operacao": "Rápido" if self.radio_rapido.isChecked() else "Normal"
         }
+
+        print("salvo os dados")
 
 
 if __name__ == "__main__":
