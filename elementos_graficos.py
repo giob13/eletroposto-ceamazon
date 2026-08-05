@@ -8,7 +8,7 @@ class MedidorCircular(QWidget):
         self.setFixedSize(240, 240)
 
         self.titulo = titulo
-        self.valor = valor
+        self.valor = int(valor)
         self.unidade = unidade
         self.is_soc = is_soc
 
@@ -87,10 +87,10 @@ class MedidorCircular(QWidget):
         fm_valor = QFontMetrics(fonte_valor)
         fm_unidade = QFontMetrics(fonte_unidade)
 
-        largura_valor = fm_valor.width(self.valor)
+        # CORREÇÃO 1: Adicionado o str() aqui
+        largura_valor = fm_valor.width(str(self.valor)) 
         largura_unidade = fm_unidade.width(self.unidade)
-        largura_total = largura_valor + largura_unidade + \
-            2  # +2 é um pequeno espaço entre eles
+        largura_total = largura_valor + largura_unidade + 2  # +2 é um pequeno espaço entre eles
 
         # calculando o ponto de partida 'X' para que fiquem no centro do círculo
         x_inicial = rect_externo.center().x() - (largura_total // 2)
@@ -102,14 +102,15 @@ class MedidorCircular(QWidget):
             y_central -= 10  # Sobe um pouco para não bater no "CARREGANDO"
 
         painter.setFont(fonte_valor)
-        painter.drawText(x_inicial, y_central, self.valor)
+        # Aqui você já tinha feito certo usando o str()!
+        painter.drawText(x_inicial, y_central, str(self.valor))
 
         painter.setFont(fonte_unidade)
-        painter.drawText(x_inicial + largura_valor +
-                         2, y_central, self.unidade)
+        painter.drawText(x_inicial + largura_valor + 2, y_central, self.unidade)
 
         painter.end()
 
     def atualizar_valor(self, novo_valor):
-        self.novo_valor = novo_valor  #Guarda os valores novos de tensão
-        self.update() # Força o widget a se redesenhar se tiver alguma pintura customizada (QPainter)
+        # CORREÇÃO 2: Atualiza a variável correta e converte para int
+        self.valor = int(novo_valor) 
+        self.update() # Força o widget a se redesenhar com o novo número

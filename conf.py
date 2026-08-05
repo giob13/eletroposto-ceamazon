@@ -194,7 +194,7 @@ class Configuracoes(QDialog):
                 "modo_operacao": "Rápido" if self.radio_rapido.isChecked() else "Normal"
         }
 
-        print("salvo os dados")
+
 
 
 if __name__ == "__main__":

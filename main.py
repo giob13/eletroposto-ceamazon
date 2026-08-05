@@ -65,17 +65,18 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         # Centralizando os indicadores horizontalmente
         indicadores_layout.setAlignment(Qt.AlignCenter)
 
-        # Medidores com variáveis dinâmicas
+        # Medidores com variáveis dinâmicas 
+        #Atualizar se houver mudança de configuração
         # corrente
         self.corrente = MedidorCircular("CORRENTE (A)", "150", "A")
         indicadores_layout.addWidget(self.corrente)
 
         # voltagem
-        self.voltagem = MedidorCircular("TENSÃO (V)", "380", "V")
+        self.voltagem = MedidorCircular("TENSÃO (V)", "360", "V")
         indicadores_layout.addWidget(self.voltagem)
 
-        # sOC (Bateria)
-        self.soc = MedidorCircular("SOC (CARGA)", "85", "%", True)
+        # sOC (Bateria) - verificar qual carga o veículo está e mostrar
+        self.soc = MedidorCircular("SOC (CARGA)", "0", "%", True)
         indicadores_layout.addWidget(self.soc)
 
         indicadores_layout.setSpacing(50)  # Adicionando um espaço entre eles
@@ -83,7 +84,7 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         #Monitoramento
         self.sinais_soc = monitoramento_soc()
 
-        self.sinais_soc.carga_carregada.connect(self.atualizar_soc)
+        self.sinais_soc.carga_atualizada.connect(self.atualizar_soc)
         self.sinais_soc.status_alterado.connect(self.atualizar_status)
         self.sinais_soc.carregamento_concluido.connect(self.finalizar_carregamento)
 
@@ -93,17 +94,21 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         layout.addLayout(botao_layout)
 
         # Criando botões
-        btn_inicio = self.criar_botao("INÍCIO")
-        btn_config = self.criar_botao("CONFIGURAÇÕES DE CARGA")
-        btn_info = self.criar_botao("INFO. DO SISTEMA")
+        self.btn_inicio = self.criar_botao("INÍCIO")
+        self.btn_config = self.criar_botao("CONFIGURAÇÕES DE CARGA")
+        self.btn_info = self.criar_botao("INFO. DO SISTEMA")
+
+        # LIGANDO OS BOTÕES DE INÍCIO E PARADA AO MOTOR SOC:
+        self.btn_inicio.clicked.connect(self.sinais_soc.iniciar_carregamento)
+                
 
         # Adicionando os botões ao layout
-        botao_layout.addWidget(btn_inicio)
-        botao_layout.addWidget(btn_config)
-        botao_layout.addWidget(btn_info)
+        botao_layout.addWidget(self.btn_inicio)
+        botao_layout.addWidget(self.btn_config)
+        botao_layout.addWidget(self.btn_info)
 
-        btn_info.clicked.connect(self.acao_info)
-        btn_config.clicked.connect(self.acao_config)
+        self.btn_info.clicked.connect(self.acao_info)
+        self.btn_config.clicked.connect(self.acao_config)
 
         # Rodapé - adicionando botão de parar carregamento
         rodape_layout = QHBoxLayout()
@@ -150,10 +155,13 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         rodape_layout.addStretch()
 
         # Adicionando o Botão Vermelho
-        btn_carregar = self.criar_botao1("PARAR CARREGAMENTO")
+        self.btn_carregar = self.criar_botao1("PARAR CARREGAMENTO")
         # Definimos uma largura fixa para ele não esticar
-        btn_carregar.setFixedWidth(300)
-        rodape_layout.addWidget(btn_carregar)
+        self.btn_carregar.setFixedWidth(300)
+        rodape_layout.addWidget(self.btn_carregar)
+
+        #Sinal do botão de parar carregamento
+        self.btn_carregar.clicked.connect(self.sinais_soc.parar_carregamento)
 
         layout.addStretch()
 
