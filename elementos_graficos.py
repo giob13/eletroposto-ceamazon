@@ -68,7 +68,7 @@ class MedidorCircular(QWidget):
             painter.setFont(fonte_pequena)
             y_carregando = rect_externo.center().y() + 30  # Joga pra baixo do centro
             painter.drawText(QRect(rect_externo.x(), y_carregando, rect_externo.width(), 20),
-                             Qt.AlignCenter, "CARREGANDO")
+                             Qt.AlignCenter, "CARREGANDO") #MUDAR AQUI PARA MOSTRAR O STATUS
 
         # texto
         painter.setPen(QPen(Qt.white))

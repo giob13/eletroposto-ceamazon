@@ -118,7 +118,7 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         barra_layout = QVBoxLayout()
 
         self.barra_progresso = QProgressBar()
-        self.barra_progresso.setValue(85)  # Mesmo valor do SOC
+        self.barra_progresso.setValue(0)  # Mesmo valor do SOC
         # Esconde a porcentagem de dentro da barra
         self.barra_progresso.setTextVisible(False)
         self.barra_progresso.setFixedHeight(15)  # Deixa ela bem fininha
@@ -138,7 +138,7 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         """)
 
         # Legenda da barra de carregamento
-        label_tempo = QLabel("TEMPO RESTANTE: 04M")
+        label_tempo = QLabel("TEMPO RESTANTE: -") #CALCULAR O TEMPO TOTAL DE CARREGAMENTO 
         label_tempo.setStyleSheet(
             "color: white; font-weight: bold; font-size: 16px;")
         # Alinha o texto à direita da barra
