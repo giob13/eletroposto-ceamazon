@@ -19,7 +19,7 @@ class monitoramento_soc(QObject):
         self.porcentagem_atual = 0
 
         # Valores padrão - variáveis de configuração
-        self.limite_soc = 80
+        self.limite_soc = 100
         self.corrente_maxima = 150 
 
         # O Qtimer vai atualizar a interface guiado pelo tempo simulado
@@ -35,9 +35,10 @@ class monitoramento_soc(QObject):
 
             print(f">>> [SOC] Eletroposto carregando! Corrente máx: {self.corrente_maxima} A")
 
+
     def atualizar_configuracoes(self, novas_configuracoes):
         # Atualiza as regras se o usuário mexer no conf.py
-        self.limite_soc = novas_configuracoes.get("limite_soc", 80)
+        self.limite_soc = novas_configuracoes.get("limite_soc", 100)
         self.corrente_maxima = novas_configuracoes.get("corrente_maxima", 150)
 
         print(f">>> [SOC] Novas regras! O sistema agora vai parar em {self.limite_soc}% e carregar com {self.corrente_maxima} A.")
@@ -49,6 +50,18 @@ class monitoramento_soc(QObject):
             self.status_alterado.emit("INTERROMPIDO") # Envia a mensagem que foi interrompido
             self.time.stop() # Desliga a contagem
             print(f">>> [SOC] Carregamento interrompido pelo usuário!")
+
+    def resetar_sistema(self):
+        """Prepara o eletroposto para receber um novo barco"""
+        self.porcentagem_atual = 0
+        
+        # Envia o zero para a tela (zera os relógios e a barra)
+        self.carga_atualizada.emit(0) 
+        
+        # Muda o texto central para o estado inicial
+        self.status_alterado.emit("AGUARDANDO")
+        
+        print(">>> [SOC] Sistema resetado. Aguardando nova conexão.")
     
     def progresso_carga(self):
         # Neste bloco, irá basicamente atualizar as informações guiada pelo qtimer

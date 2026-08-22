@@ -12,6 +12,8 @@ class MedidorCircular(QWidget):
         self.unidade = unidade
         self.is_soc = is_soc
 
+        self.texto_status = "AGUARDANDO"
+
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
@@ -68,7 +70,7 @@ class MedidorCircular(QWidget):
             painter.setFont(fonte_pequena)
             y_carregando = rect_externo.center().y() + 30  # Joga pra baixo do centro
             painter.drawText(QRect(rect_externo.x(), y_carregando, rect_externo.width(), 20),
-                             Qt.AlignCenter, "CARREGANDO") #MUDAR AQUI PARA MOSTRAR O STATUS
+                             Qt.AlignCenter, self.texto_status) 
 
         # texto
         painter.setPen(QPen(Qt.white))
@@ -114,3 +116,7 @@ class MedidorCircular(QWidget):
         # CORREÇÃO 2: Atualiza a variável correta e converte para int
         self.valor = int(novo_valor) 
         self.update() # Força o widget a se redesenhar com o novo número
+
+    def atualizar_texto_status(self, novo_texto):
+        self.texto_status = novo_texto
+        self.update() # Força o círculo a ser desenhado novamente com a palavra nova

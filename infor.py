@@ -263,49 +263,58 @@ class TelaInfoSistema(QDialog):
         layout_principal.addWidget(self.area_conteudo)
     
     def informacoes_rede(self):
-        
         info = {
             "status": "Sem conexão",
-            "tipo": None,
-            "rede": None
+            "tipo": "Desconhecido",
+            "rede": "Desconhecida",
+            "ip": "0.0.0.0"
         }
         
-        #Verifica a conexão com a internet
+        # 1. Verifica a conexão com a internet
         try:
             socket.create_connection(('google.com', 80), timeout=3)
             info["status"] = "Conectado"
-        
         except OSError:
+            # Se não tem internet, retorna o dicionário padrão imediatamente
             return info
+            
+        # 2. Descobre o número do IP local real (Ex: 192.168.0.15)
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(('8.8.8.8', 80)) # Simula uma conexão com o Google
+            info["ip"] = s.getsockname()[0]
+            s.close()
+        except Exception:
+            info["ip"] = "127.0.0.1" # IP de fallback (localhost)
         
+        # 3. Verifica qual sistema operacional está rodando
         sistema = platform.system()
 
-        #Verifica qual sistema operacional está conectado
-
-        #Linux
+        # --- LINUX (Para rodar no Raspberry Pi do Eletroposto) ---
         if sistema == "Linux":
             try:
                 ssid = subprocess.check_output(
                     ["iwgetid", "-r"],
-                    text= True
-                    ).strip()
+                    text=True
+                ).strip()
+                
                 if ssid:
-                    info["tipo"] = "Wi-fi"
+                    info["tipo"] = "Wi-Fi"
                     info["rede"] = ssid
-
                 else: 
                     info["tipo"] = "Ethernet"
-                    info["rede"] = "Cabo da Rede"
+                    info["rede"] = "Cabo de Rede"
 
             except Exception: 
                 info["tipo"] = "Ethernet"
                 info["rede"] = "Cabo de Rede"
-        
+                
+        # --- WINDOWS (Para o seu PC onde está programando) ---
         elif sistema == "Windows":
             try:
                 resultado = subprocess.check_output(
                      ["powershell", "-Command", "Get-NetConnectionProfile | Select-Object Name,InterfaceAlias"],
-                text=True
+                     text=True
                 )        
 
                 linhas = resultado.splitlines()
@@ -313,12 +322,14 @@ class TelaInfoSistema(QDialog):
                 for linha in linhas:
                     if "Wi-Fi" in linha or "Ethernet" in linha:
                         partes = linha.split()
-
                         if len(partes) >= 2:
-                            info["rede"] = partes[0]
+                            # Pega a última palavra como o Tipo (Wi-Fi ou Ethernet)
                             info["tipo"] = partes[-1]
+                            
+                            # Junta todo o resto para formar o nome da rede 
+                            # (Isso resolve o problema de redes com espaços no nome, como "Rede 2")
+                            info["rede"] = " ".join(partes[:-1])
                             break
-
             except Exception:
                 pass
 

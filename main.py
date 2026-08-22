@@ -138,7 +138,7 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         """)
 
         # Legenda da barra de carregamento
-        label_tempo = QLabel("TEMPO RESTANTE: -") #CALCULAR O TEMPO TOTAL DE CARREGAMENTO 
+        label_tempo = QLabel("TEMPO RESTANTE") #CALCULAR O TEMPO TOTAL DE CARREGAMENTO 
         label_tempo.setStyleSheet(
             "color: white; font-weight: bold; font-size: 16px;")
         # Alinha o texto à direita da barra
@@ -161,7 +161,7 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         rodape_layout.addWidget(self.btn_carregar)
 
         #Sinal do botão de parar carregamento
-        self.btn_carregar.clicked.connect(self.sinais_soc.parar_carregamento)
+        self.btn_carregar.clicked.connect(self.acao_botao_vermelho)
 
         layout.addStretch()
 
@@ -241,15 +241,37 @@ class MainWindow(QMainWindow):  # Define estrutura da janela
         else: 
             print("O usuário fechou ou cancelou as configurações.")
 
+    def acao_botao_vermelho(self):
+        # Se o botão estiver como "Parar", ele corta a energia
+        if self.btn_carregar.text() == "PARAR CARREGAMENTO":
+            self.sinais_soc.parar_carregamento()
+            self.btn_carregar.setText("FINALIZAR") # Transforma o botão
+            self.btn_inicio.setEnabled(True)       # Libera o início novamente
+            
+        # Se já estiver parado/concluído e o texto for "Finalizar", ele limpa a tela
+        elif self.btn_carregar.text() == "FINALIZAR":
+            self.sinais_soc.resetar_sistema()
+            self.btn_carregar.setText("PARAR CARREGAMENTO") # Volta ao original
+            
+            # (Opcional) Trava o botão vermelho até iniciarem uma nova carga
+            # self.btn_carregar.setEnabled(False)
+
     def atualizar_soc(self, porcentagem):
         self.soc.atualizar_valor(porcentagem)
         self.barra_progresso.setValue(porcentagem)
 
     def atualizar_status (self, status):
-        print(status)
+        print(f"O Status mudou para: {status}")
+        # Manda a palavra nova para o mostrador redondo!
+        self.soc.atualizar_texto_status(status)
+  
 
     def finalizar_carregamento(self):
         print("Carregamento concluído!")
+        
+        # Como o processo acabou com sucesso, o botão vira "FINALIZAR"
+        self.btn_carregar.setText("FINALIZAR")
+        self.btn_inicio.setEnabled(True) # Libera para um novo início
         
 app = QApplication(sys.argv)
 window = MainWindow()
